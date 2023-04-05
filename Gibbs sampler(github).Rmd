@@ -1,0 +1,101 @@
+
+```{r}
+#Example 1
+
+f_X_given_Y=function(y)
+  {
+  return(rexp(1,y))
+}
+
+f_Y_given_X=function(x)
+  {
+  return(rexp(1,x))
+}
+x0=10
+y0=70
+i=0
+Y=c()
+X=c()
+X[1]=f_X_given_Y(y0)
+while(length(X)<1001 && length(Y)<1000)
+{
+i=i+1
+Y[i]=f_Y_given_X(X[i])
+X[i+1]=f_X_given_Y(Y[i])
+
+}
+data.frame("X_by_Gibbs_Sampling"=X[-1],"Y_by_Gibbs_Sampling"=Y)
+
+```
+```{r}
+
+#Example 2 
+
+f_X_given_Y=function(row,y)
+  {
+  return(rnorm(1,row*y,1-(row^2)))
+}
+
+f_Y_given_X=function(row,x)
+  {
+  return(rnorm(1,row*x,1-(row^2)))
+}
+x0=rnorm(1,0,1)
+y0=rnorm(1,0,1)
+row=0.5
+i=0
+Y=c()
+X=c()
+X[1]=f_X_given_Y(row,y0)
+while(length(X)<1001 && length(Y)<1000)
+{
+i=i+1
+Y[i]=f_Y_given_X(row,X[i])
+X[i+1]=f_X_given_Y(row,Y[i])
+
+}
+data.frame("X_by_Gibbs_Sampling"=X[-1],"Y_by_Gibbs_Sampling"=Y)
+
+#Following normality plots verifies that the samples drawn are from normal distribution. 
+qqnorm(Y,col="darkgreen",pch=22,cex=0.5,main="Normality Plot of Y ")
+qqnorm(X,col="darkgreen",pch=22,cex=0.5,main="Normality Plot of X ")
+```
+```{r}
+
+#Example 3 
+f_X_given_Y=function(y,n)
+  {
+  return(rbinom(1,n,y))
+}
+
+f_Y_given_X=function(x,alpha,beta)
+  {
+  return(rbeta(1,x+alpha,n-x+beta))
+}
+x0=1 # According to range of x given
+y0=0.5 # According to range of y given
+n=16 #Assume some parameter value
+alpha=2  #Assume some parameter value
+beta=  4 #Assume some parameter value
+i=0
+Y=c()
+X=c()
+X[1]=f_X_given_Y(y0,n)
+while(length(X)<501 && length(Y)<500)
+{
+i=i+1
+Y[i]=f_Y_given_X(X[i],alpha,beta)
+X[i+1]=f_X_given_Y(Y[i],n)
+
+}
+data.frame("X_by_Gibbs_Sampling"=X[-1],"Y_by_Gibbs_Sampling"=Y)
+
+#Estimated Density 
+hist(X,prob=TRUE,breaks=50,col="darkgreen",main="Estimated beta-binomial density",xlab="sample")
+
+
+
+```
+```{r}
+
+
